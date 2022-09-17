@@ -3,29 +3,32 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import './App.css';
 import MovieList from './components/MovieList';
 import MovieListHeading from './components/MovieListHeading';
+import SearchBox from './components/SearchBox';
 
 const App = () => {
   const [movies, setMovies] = useState([]);
   const [searchValue, setSearchValue] = useState("");
 
-  const getMovieRequest = async () => {
-    const url = "http://www.omdbapi.com/?s=avengers&apikey=9cb76cd0";
+  const getMovieRequest = async (searchValue) => {
+    const url = `http://www.omdbapi.com/?s=${searchValue}&apikey=9cb76cd0`;
     
     const response = await fetch(url);
     const responseJson = await response.json();
 
-    console.log(responseJson);
-    setMovies(responseJson.Search);
+    if(responseJson.search) {
+      setMovies(responseJson.Search);
+    }
   }; // end getMovieRequest()
 
   useEffect(()=>{
-    getMovieRequest();
-  }, []); // end useEffect
+    getMovieRequest(searchValue);
+  }, [searchValue]); // end useEffect
 
   return (
     <div className= 'container-fluid movie-app'>
-      <div className='row'>
+      <div className='row d-flex align-item-center mt-4 mb-4'>
         <MovieListHeading heading='Movies'/>
+        <SearchBox searchValue={searchValue} setSearchValue={setSearchValue} />
       </div>
       <div className='row'>
         <MovieList movies={movies} />
